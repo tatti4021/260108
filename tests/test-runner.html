@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>財務モデリングシステム - テストランナー</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .controls {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .summary {
+      padding: 20px 30px;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .summary-card {
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .summary-card.total {
+      background: #e3f2fd;
+      border: 2px solid #2196f3;
+    }
+
+    .summary-card.passed {
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+    }
+
+    .summary-card.failed {
+      background: #ffebee;
+      border: 2px solid #f44336;
+    }
+
+    .summary-card .label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-card .value {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .summary-card.total .value {
+      color: #2196f3;
+    }
+
+    .summary-card.passed .value {
+      color: #4caf50;
+    }
+
+    .summary-card.failed .value {
+      color: #f44336;
+    }
+
+    .results {
+      padding: 30px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .test-suite {
+      margin-bottom: 30px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .test-suite-header {
+      background: #f8f9fa;
+      padding: 15px 20px;
+      font-weight: 600;
+      font-size: 18px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .test-output {
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      background: #fafafa;
+    }
+
+    .test-pass {
+      color: #28a745;
+    }
+
+    .test-fail {
+      color: #dc3545;
+    }
+
+    .test-header {
+      color: #495057;
+      font-weight: bold;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state-text {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>財務モデリングシステム テストランナー</h1>
+      <p>ユニットテスト・統合テストの実行とレポート</p>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" onclick="runAllTests()">すべてのテストを実行</button>
+      <button class="btn btn-secondary" onclick="runUnitTests()">ユニットテストのみ</button>
+      <button class="btn btn-secondary" onclick="runIntegrationTests()">統合テストのみ</button>
+      <button class="btn btn-success" onclick="clearResults()">結果をクリア</button>
+    </div>
+
+    <div class="summary" id="summary" style="display: none;">
+      <div class="summary-grid">
+        <div class="summary-card total">
+          <div class="label">合計テスト数</div>
+          <div class="value" id="total-tests">0</div>
+        </div>
+        <div class="summary-card passed">
+          <div class="label">成功</div>
+          <div class="value" id="passed-tests">0</div>
+        </div>
+        <div class="summary-card failed">
+          <div class="label">失敗</div>
+          <div class="value" id="failed-tests">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="empty-state">
+        <div class="empty-state-icon">🧪</div>
+        <div class="empty-state-text">テストを実行するには、上のボタンをクリックしてください</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // テストモジュールのインポート
+    import { runTests as runPlCalcTests } from './unit/pl-calc.test.js';
+    import { runTests as runBsCalcTests } from './unit/bs-calc.test.js';
+    import { runTests as runRatiosTests } from './unit/ratios.test.js';
+    import { runTests as runStateTests } from './integration/state.test.js';
+    import { runTests as runIntegrationTests } from './integration/integration.test.js';
+
+    // グローバルスコープに公開
+    window.testModules = {
+      unit: {
+        plCalc: runPlCalcTests,
+        bsCalc: runBsCalcTests,
+        ratios: runRatiosTests
+      },
+      integration: {
+        state: runStateTests,
+        integration: runIntegrationTests
+      }
+    };
+
+    // コンソール出力をキャプチャ
+    const originalLog = console.log;
+    const originalError = console.error;
+    let capturedOutput = [];
+
+    function captureConsole() {
+      capturedOutput = [];
+      console.log = (...args) => {
+        capturedOutput.push({ type: 'log', message: args.join(' ') });
+        originalLog(...args);
+      };
+      console.error = (...args) => {
+        capturedOutput.push({ type: 'error', message: args.join(' ') });
+        originalError(...args);
+      };
+    }
+
+    function restoreConsole() {
+      console.log = originalLog;
+      console.error = originalError;
+    }
+
+    function formatOutput(output) {
+      return output.map(item => {
+        const message = item.message;
+        if (message.includes('✓')) {
+          return `<span class="test-pass">${message}</span>`;
+        } else if (message.includes('✗')) {
+          return `<span class="test-fail">${message}</span>`;
+        } else if (message.includes('='.repeat(10))) {
+          return `<span class="test-header">${message}</span>`;
+        } else {
+          return message;
+        }
+      }).join('\n');
+    }
+
+    function runTestSuite(name, testFn) {
+      captureConsole();
+      const result = testFn();
+      restoreConsole();
+
+      return {
+        name,
+        output: capturedOutput,
+        result
+      };
+    }
+
+    window.runAllTests = function() {
+      showLoading();
+
+      setTimeout(() => {
+        const results = [];
+        let totalTests = 0;
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        // ユニットテスト
+        results.push(runTestSuite('P/L計算ロジック', window.testModules.unit.plCalc));
+        results.push(runTestSuite('B/S計算ロジック', window.testModules.unit.bsCalc));
+        results.push(runTestSuite('財務比率計算', window.testModules.unit.ratios));
+
+        // 統合テスト
+        results.push(runTestSuite('状態管理', window.testModules.integration.state));
+        results.push(runTestSuite('財務三表連携', window.testModules.integration.integration));
+
+        // 集計
+        results.forEach(r => {
+          if (r.result) {
+            totalTests += r.result.total || 0;
+            totalPassed += r.result.passed || 0;
+            totalFailed += r.result.failed || 0;
+          }
+        });
+
+        displayResults(results, totalTests, totalPassed, totalFailed);
+      }, 100);
+    };
+
+    window.runUnitTests = function() {
+      showLoading();
+
+      setTimeout(() => {
+        const results = [];
+        let totalTests = 0;
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        results.push(runTestSuite('P/L計算ロジック', window.testModules.unit.plCalc));
+        results.push(runTestSuite('B/S計算ロジック', window.testModules.unit.bsCalc));
+        results.push(runTestSuite('財務比率計算', window.testModules.unit.ratios));
+
+        results.forEach(r => {
+          if (r.result) {
+            totalTests += r.result.total || 0;
+            totalPassed += r.result.passed || 0;
+            totalFailed += r.result.failed || 0;
+          }
+        });
+
+        displayResults(results, totalTests, totalPassed, totalFailed);
+      }, 100);
+    };
+
+    window.runIntegrationTests = function() {
+      showLoading();
+
+      setTimeout(() => {
+        const results = [];
+        let totalTests = 0;
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        results.push(runTestSuite('状態管理', window.testModules.integration.state));
+        results.push(runTestSuite('財務三表連携', window.testModules.integration.integration));
+
+        results.forEach(r => {
+          if (r.result) {
+            totalTests += r.result.total || 0;
+            totalPassed += r.result.passed || 0;
+            totalFailed += r.result.failed || 0;
+          }
+        });
+
+        displayResults(results, totalTests, totalPassed, totalFailed);
+      }, 100);
+    };
+
+    function showLoading() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <div>テストを実行中...</div>
+        </div>
+      `;
+      document.getElementById('summary').style.display = 'none';
+    }
+
+    function displayResults(results, totalTests, totalPassed, totalFailed) {
+      // サマリー更新
+      document.getElementById('total-tests').textContent = totalTests;
+      document.getElementById('passed-tests').textContent = totalPassed;
+      document.getElementById('failed-tests').textContent = totalFailed;
+      document.getElementById('summary').style.display = 'block';
+
+      // 結果表示
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = results.map(suite => `
+        <div class="test-suite">
+          <div class="test-suite-header">${suite.name}</div>
+          <div class="test-output">${formatOutput(suite.output)}</div>
+        </div>
+      `).join('');
+    }
+
+    window.clearResults = function() {
+      document.getElementById('results').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🧪</div>
+          <div class="empty-state-text">テストを実行するには、上のボタンをクリックしてください</div>
+        </div>
+      `;
+      document.getElementById('summary').style.display = 'none';
+    };
+  </script>
+</body>
+</html>
