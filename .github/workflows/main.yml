@@ -1,0 +1,11 @@
+name: first-action
+
+on:
+  workflow_dispatch:   # ← 手動実行できるトリガー
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say hello
+        run: echo "Hello GitHub Actions!"
