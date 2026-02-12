@@ -297,5 +297,71 @@ export function renderSettings() {
     });
 }
 
+/**
+ * DCF分析ページを表示
+ */
+export function renderDCF() {
+    import('./views/dcf.js').then(module => {
+        const { DCFView } = module;
+        const container = document.getElementById('mainContent');
+        const dcfView = new DCFView(container);
+        dcfView.render();
+    }).catch(error => {
+        console.error('Failed to load DCF view:', error);
+        document.getElementById('mainContent').innerHTML = `
+            <div class="page-content">
+                <h2 class="page-title">DCF分析</h2>
+                <div class="alert alert-danger">
+                    ビューの読み込みに失敗しました: ${error.message}
+                </div>
+            </div>
+        `;
+    });
+}
+
+/**
+ * 感度分析ページを表示
+ */
+export function renderSensitivity() {
+    import('./views/sensitivity.js').then(module => {
+        const { SensitivityView } = module;
+        const container = document.getElementById('mainContent');
+        const sensitivityView = new SensitivityView(container);
+        sensitivityView.render();
+    }).catch(error => {
+        console.error('Failed to load Sensitivity view:', error);
+        document.getElementById('mainContent').innerHTML = `
+            <div class="page-content">
+                <h2 class="page-title">感度分析</h2>
+                <div class="alert alert-danger">
+                    ビューの読み込みに失敗しました: ${error.message}
+                </div>
+            </div>
+        `;
+    });
+}
+
+/**
+ * 損益分岐点分析ページを表示
+ */
+export function renderBreakeven() {
+    import('./views/breakeven.js').then(module => {
+        const { BreakevenView } = module;
+        const container = document.getElementById('mainContent');
+        const breakevenView = new BreakevenView(container);
+        breakevenView.render();
+    }).catch(error => {
+        console.error('Failed to load Breakeven view:', error);
+        document.getElementById('mainContent').innerHTML = `
+            <div class="page-content">
+                <h2 class="page-title">損益分岐点分析</h2>
+                <div class="alert alert-danger">
+                    ビューの読み込みに失敗しました: ${error.message}
+                </div>
+            </div>
+        `;
+    });
+}
+
 // ルーターをエクスポート
 export default Router;

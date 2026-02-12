@@ -282,6 +282,9 @@
     import { runTests as runPlCalcTests } from './unit/pl-calc.test.js';
     import { runTests as runBsCalcTests } from './unit/bs-calc.test.js';
     import { runTests as runRatiosTests } from './unit/ratios.test.js';
+    import { runTests as runDcfCalcTests } from './unit/dcf-calc.test.js';
+    import { runTests as runSensitivityCalcTests } from './unit/sensitivity-calc.test.js';
+    import { runTests as runBreakevenCalcTests } from './unit/breakeven-calc.test.js';
     import { runTests as runStateTests } from './integration/state.test.js';
     import { runTests as runIntegrationTests } from './integration/integration.test.js';
 
@@ -290,7 +293,10 @@
       unit: {
         plCalc: runPlCalcTests,
         bsCalc: runBsCalcTests,
-        ratios: runRatiosTests
+        ratios: runRatiosTests,
+        dcfCalc: runDcfCalcTests,
+        sensitivityCalc: runSensitivityCalcTests,
+        breakevenCalc: runBreakevenCalcTests
       },
       integration: {
         state: runStateTests,
@@ -360,6 +366,9 @@
         results.push(runTestSuite('P/L計算ロジック', window.testModules.unit.plCalc));
         results.push(runTestSuite('B/S計算ロジック', window.testModules.unit.bsCalc));
         results.push(runTestSuite('財務比率計算', window.testModules.unit.ratios));
+        results.push(runTestSuite('DCF計算ロジック', window.testModules.unit.dcfCalc));
+        results.push(runTestSuite('感度分析計算ロジック', window.testModules.unit.sensitivityCalc));
+        results.push(runTestSuite('損益分岐点分析計算ロジック', window.testModules.unit.breakevenCalc));
 
         // 統合テスト
         results.push(runTestSuite('状態管理', window.testModules.integration.state));
@@ -390,6 +399,9 @@
         results.push(runTestSuite('P/L計算ロジック', window.testModules.unit.plCalc));
         results.push(runTestSuite('B/S計算ロジック', window.testModules.unit.bsCalc));
         results.push(runTestSuite('財務比率計算', window.testModules.unit.ratios));
+        results.push(runTestSuite('DCF計算ロジック', window.testModules.unit.dcfCalc));
+        results.push(runTestSuite('感度分析計算ロジック', window.testModules.unit.sensitivityCalc));
+        results.push(runTestSuite('損益分岐点分析計算ロジック', window.testModules.unit.breakevenCalc));
 
         results.forEach(r => {
           if (r.result) {

@@ -10,7 +10,10 @@ import Router, {
     renderCF,
     renderAnalysis,
     renderForecast,
-    renderSettings
+    renderSettings,
+    renderDCF,
+    renderSensitivity,
+    renderBreakeven
 } from './router.js';
 
 import { initialize, saveState } from './utils/state.js';
@@ -77,6 +80,9 @@ class FinancialModelingApp {
         this.router.register('cf', renderCF);
         this.router.register('analysis', renderAnalysis);
         this.router.register('forecast', renderForecast);
+        this.router.register('dcf', renderDCF);
+        this.router.register('sensitivity', renderSensitivity);
+        this.router.register('breakeven', renderBreakeven);
         this.router.register('settings', renderSettings);
     }
 
